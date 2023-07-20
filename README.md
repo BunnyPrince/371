@@ -37,9 +37,9 @@ Sources used for help:
 - Mike Shah youtube videos for openGl help: https://www.youtube.com/@MikeShah
 - Victor Gordan youtube videos for openGl help: https://www.youtube.com/@VictorGordan
 
-  Code reused:
-  - Lab 2
-  - Lab 3
-  - lab 4
-  - Assignment 1
+Code reused:
+- Lab 2
+- Lab 3
+- lab 4
+- Assignment 1
  
