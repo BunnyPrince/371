@@ -1,20 +1,14 @@
-//#include <algorithm>
-//#include <iostream>
-//#include <vector>
-//
+// alot of part in this assignment was reused from  labs 
+
 #define GLEW_STATIC 1  // This allows linking with Static Library on Windows, without DLL
-#include <GL/glew.h>  // Include GLEW - OpenGL Extension Wrangler
-#include <GLFW/glfw3.h>  // GLFW provides a cross-platform interface for creating a graphical context,
-// initializing OpenGL and binding inputs
-
-#include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
-#include <glm/gtc/matrix_transform.hpp>  // include this to create transformation matrices
+#include <GL/glew.h>  
+#include <GLFW/glfw3.h>  
+#include <glm/glm.hpp>  
+#include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp>
-
 #include "OBJloader.h"    //For loading .obj files
 #include "OBJloaderV2.h"  //For loading .obj files using a polygon list format
 #include "shaderloader.h"
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -23,11 +17,7 @@ using namespace std;
 
 // window dimensions
 const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
-const float triangleVertices[] = {
-   -0.6f, -0.34f, 0.0f, // Bottom-left 
-     0.6f, -0.34f, 0.0f, // Bottom-right 
-     0.0f,  0.5f, 0.0f  // Top 
-};
+
 vec3 computeCameraLookAt(double& lastMousePosX, double& lastMousePosY, float dt);
 
 GLuint setupModelVBO(string path, int& vertexCount);
@@ -160,7 +150,7 @@ GLuint LoadShaders(std::string vertex_shader_path,
 
 
 void creatCube(mat4 modelMatrices, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type,bool shadows) {
 
 
     SetUniformMat4(shaderScene, "model_matrix", modelMatrices);
@@ -245,8 +235,9 @@ void creatCube(mat4 modelMatrices, GLuint shaderScene, GLuint shaderShadow, mat4
     }
 }
 
+// drawing the lower arm 
 void drawLowerArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type,bool shadows) {
 
     mat4 modelMatrices =  
         glm::translate(mat4(1.0f), vec3(position.x-0.17, position.y-0.5, position.z)) *
@@ -254,22 +245,25 @@ void drawLowerArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint sh
         glm::scale(mat4(1.0f), vec3(0.1f,0.5f,0.1f));
     mat4 woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 }
 
+// drawing the upper arm
 void drawUpperArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type,bool shadows) {
 
     mat4 modelMatrices = 
         glm::translate(mat4(1.0f), vec3(position.x, position.y, position.z)) *
         glm::scale(mat4(1.0f), vec3(0.1f, 0.5f, 0.1f));
     mat4 woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 }
 
+
+//drawing the rackets
 void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices,int type) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices,int type,bool shadows) {
 
     // the handle
     mat4 modelMatrices =  
@@ -277,7 +271,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.05f, 0.7f, 0.05f));
     mat4 woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // the left bar that connect the handle '\'
     modelMatrices = 
@@ -286,7 +280,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.05f, 0.4f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // the right bar the connect the handle '/'
     modelMatrices =  
@@ -295,7 +289,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.05f, 0.4f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // the bar that connect both '\ /'
      modelMatrices = 
@@ -303,7 +297,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.35f, 0.05f, 0.05f));
      woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // side bar on top of '\'
     modelMatrices =  
@@ -311,7 +305,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.05f, 0.6f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // side bar on top of '/'
     modelMatrices =
@@ -319,7 +313,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.05f, 0.6f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // lower small '/' on left top 
     modelMatrices =
@@ -328,7 +322,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.15f, 0.05f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
 
     // lower small '\' on right top 
@@ -338,7 +332,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.15f, 0.05f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // upper small '/' on left top 
     modelMatrices =
@@ -347,7 +341,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.15f, 0.05f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     // upper small '\' on right top 
     modelMatrices =
@@ -356,7 +350,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.15f, 0.05f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
 
     // upper small '-'  
@@ -365,7 +359,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         glm::scale(mat4(1.0f), vec3(0.15f, 0.05f, 0.05f));
     woldMatrices = groupMatrix * modelMatrices;
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
 
     // | net 
@@ -376,7 +370,7 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
             glm::scale(mat4(1.0f), vec3(0.01f, 0.8f, 0.01f));
         woldMatrices = groupMatrix * modelMatrices;
         creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
     }
 
     // - net
@@ -386,34 +380,36 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
             glm::scale(mat4(1.0f), vec3(0.48f, 0.01f, 0.01f));
         woldMatrices = groupMatrix * modelMatrices;
         creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
     }
 }
 
+// drawing everything at the same time
 void drawFullModel(mat4 groupMatrix,vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices,int type) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices,int type,bool shadows) {
 
     drawLowerArm(groupMatrix, position, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     drawUpperArm(groupMatrix, position, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
     drawRacket(groupMatrix, position, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 }
 
+// getting random position to move
 vec3 getRandomGridPosition()
 {
-    float minX = -100;
-    float maxX = 100;
-    float minZ = -100;
-    float maxZ = 100;
+    float minX = -50;
+    float maxX = 50;
+    float minZ = -50;
+    float maxZ = 50;
 
     float x = minX + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxX - minX)));
     float z = minZ + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (maxZ - minZ)));
 
-    return vec3(x, 0.0f, z);
+    return vec3(x, -1.0f, z);
 }
 
 
@@ -421,9 +417,9 @@ int main(int argc, char* argv[]) {
 
     GLuint WIDTH = 1024, HEIGHT = 768;
     if (!InitContext(WIDTH, HEIGHT)) return -1;
-
-    // Black background
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    
+    //Background color
+    glClearColor(0.5f, 0.8f, 0.9f, 1.0f);
 
 #if defined(PLATFORM_OSX)
     std::string shaderPathPrefix = "Shaders/";
@@ -437,24 +433,11 @@ int main(int argc, char* argv[]) {
     GLuint shaderShadow = loadSHADER(shaderPathPrefix + "shadow_vertex.glsl",
         shaderPathPrefix + "shadow_fragment.glsl");
 
-
-    GLuint shaderTexture = LoadShaders(shaderPathPrefix + "Texture.vertexshader",
-        shaderPathPrefix + "Texture.fragmentshader");
-
-    GLuint shaderColor = LoadShaders(shaderPathPrefix + "SolidColor.vertexshader",
-        shaderPathPrefix + "SolidColor.fragmentshader");
-
-    int textureWidth = 0;
-    GLuint particleTexture = LoadTexture(
-        "/Users/Janan/Comp371/assignment1/assignment1/assets/textures/Particle.png", textureWidth);
-
     // Setup models
 #if defined(PLATFORM_OSX)
-    string heraclesPath = "Models/heracles.obj";
     string cubePath = "Models/cube.obj";
     string ballPath = "Models/plane.obj";
 #else
-    string heraclesPath = "Assets/Models/heracles.obj";
     string cubePath = "Assets/Models/cube.obj";
     string ballPath = "Assets/Models/plane.obj";
 #endif
@@ -530,15 +513,24 @@ int main(int argc, char* argv[]) {
     float cameraSpeed = 5.0f;
     float cameraFastSpeed = 3 * cameraSpeed;
     vec3 modelPosition(0.0f, -1.0f, 0.0f);
+    vec3 ballPosition(-1.0f, 1.0f, 0.0f);
+
+
+    vec3 modelPositionB(0.0f, -1.0f, 0.0f);
+    vec3 ballPositionB(-1.0f, 1.0f, 0.0f);
 
     float angleHorizontal = 0;
     float angleVertical = 0;
     float scal = 1.0f;
+
+    float scalBall = 0.0f;
     // For spinning model
     float spinningAngle = 0.0f;
     int type = 0; // the type of model
-    int arm = 0;
+    int light = 0; // the type of light
+    int arm = 0; // what arm
     bool mov = true;
+    bool shadows = true;
 
     // Set projection matrix for shader, this won't change
     mat4 projectionMatrix =
@@ -575,6 +567,8 @@ int main(int argc, char* argv[]) {
     double lastMousePosX, lastMousePosY;
     glfwGetCursorPos(window, &lastMousePosX, &lastMousePosY);
 
+    float lastclicked = glfwGetTime();
+
     // Other OpenGL states to set once
     // Enable Backface culling
     glEnable(GL_DEPTH_TEST);
@@ -585,26 +579,31 @@ int main(int argc, char* argv[]) {
         float dt = glfwGetTime() - lastFrameTime;
         lastFrameTime = glfwGetTime();
 
-        glUseProgram(shaderTexture);
 
-        GLint colorLocation = glGetUniformLocation(shaderTexture, "color");
         // light parameters
         float phi = glfwGetTime() * 0.5f * 3.14f;
-        vec3 lightPosition = vec3(0.0f, 30.0f, 0.0f); // the location of the light in 3D space: fixed position
-        vec3(cosf(phi) * cosf(phi), sinf(phi),
-            -cosf(phi) * sinf(phi)) *
-            5.0f;  // variable position
+        vec3 lightPosition = vec3(0.0f);
+        if (light == 0) {
+            // still light
+            lightPosition = vec3(0.0f, 30.0f, 0.0f);
+        }
+        else {
+            // rotating light
+            lightPosition = vec3(cosf(phi) , sinf(phi),
+            -cosf(phi) ) *
+            5.0f;
+        }
 
         vec3 lightFocus(0, 0, -1);  // the point in 3D space the light "looks" at
         vec3 lightDirection = normalize(lightFocus - lightPosition);
-
         float lightNearPlane = 0.01f;
-        float lightFarPlane = 400.0f;
+        float lightFarPlane = 100.0f;
 
         mat4 lightProjMatrix = frustum(-1.0f, 1.0f, -(float)DEPTH_MAP_TEXTURE_SIZE, 1.0f, lightNearPlane, lightFarPlane);
-        //perspective(50.0f, (float)DEPTH_MAP_TEXTURE_SIZE / (float)DEPTH_MAP_TEXTURE_SIZE, lightNearPlane, lightFarPlane);
+        //perspective(50.0f, 1.0f, lightNearPlane, lightFarPlane);
         mat4 lightViewMatrix = lookAt(lightPosition, lightFocus, vec3(0, 1, 0));
 
+        // giving all the light info 
         SetUniformMat4(shaderScene, "light_proj_view_matrix", lightProjMatrix * lightViewMatrix);
         SetUniform1Value(shaderScene, "light_near_plane", lightNearPlane);
         SetUniform1Value(shaderScene, "light_far_plane", lightFarPlane);
@@ -612,42 +611,29 @@ int main(int argc, char* argv[]) {
         SetUniformVec3(shaderScene, "light_direction", lightDirection);
 
 
-
         int width, height;
+        // getting the new size of the window
         glfwGetFramebufferSize(window, &width, &height);
 
-
+        // changing the dimension of when window size is changed 
         if (WIDTH != width|| HEIGHT != height) {
             glViewport(0, 0, width, height);
         }
-
         WIDTH = width;
         HEIGHT = height;
-
-        // Spinning model rotation animation
-        spinningAngle += 45.0f * dt;  // This is equivalent to 45 degrees per second
-
         glm::mat4 modelMatrices[2];
 
 
-        // Set model matrix and send to both shaders
-       mat4 groundMatrices =  // mat4(1.0f);
-            glm::translate(mat4(1.0f), vec3(0.0f, -3.0f, 0.0f)) *
+        // Set ground matrix and send to both shaders
+       mat4 groundMatrices =  
+            glm::translate(mat4(1.0f), vec3(0.0f, -10.0f, 0.0f)) *
             glm::scale(mat4(1.0f), vec3(100.0f,0.01f,100.0f));
 
         SetUniformMat4(shaderScene, "model_matrix", groundMatrices);
-
         SetUniformMat4(shaderShadow, "transform_in_light_space", lightProjMatrix * lightViewMatrix * groundMatrices);
-
-
-
-
+        
         // Render shadow in 2 passes: 1- Render depth map, 2- Render scene
-        // 1- Render shadow map:
-        // a- use program for shadows
-        // b- resize window coordinates to fix depth map output size
-        // c- bind depth map framebuffer to output the depth values
-        {
+        if (shadows == 1){
             // Use proper shader
             glUseProgram(shaderShadow);
             // Use proper image output size
@@ -655,6 +641,7 @@ int main(int argc, char* argv[]) {
             // Bind depth map texture as output framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
             // Clear depth data on the framebuffer
+
             glClear(GL_DEPTH_BUFFER_BIT);
             // Bind geometry
             glBindVertexArray(activeVAO);
@@ -678,9 +665,8 @@ int main(int argc, char* argv[]) {
             glViewport(0, 0, width, height);
             // Bind screen as output framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            // Clear color and depth data on framebuffer
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             // Bind depth map texture: not needed, by default it is active
             // glActiveTexture(GL_TEXTURE0);
             // Bind geometry
@@ -693,153 +679,146 @@ int main(int argc, char* argv[]) {
             glBindVertexArray(0);
         }
 
+
+        // Set ball matrix and send to both shaders
         mat4 ballMatrices =  // mat4(1.0f);
-            glm::translate(mat4(1.0f), vec3(-1.0f, 1.0f, 0.0f)) *
-            glm::scale(mat4(1.0f), vec3(0.06f));
+            glm::translate(mat4(1.0f), ballPosition) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(angleHorizontal), glm::vec3(0.0f, 1.0f, 0.0f)) * 
+            glm::rotate(glm::mat4(1.0f), glm::radians(angleVertical), glm::vec3(1.0f, 0.0f, 0.0f)) *
+            glm::scale(mat4(1.0f), vec3(0.06f+ scalBall));
 
         SetUniformMat4(shaderScene, "model_matrix", ballMatrices);
-        SetUniformVec3(shaderTexture, "v_color", vec3(1.0f, 0.0f, 0.0f));
-
         SetUniformMat4(shaderShadow, "transform_in_light_space", lightProjMatrix * lightViewMatrix * ballMatrices);
 
-
-        // Render shadow in 2 passes: 1- Render depth map, 2- Render scene
-        // 1- Render shadow map:
-        // a- use program for shadows
-        // b- resize window coordinates to fix depth map output size
-        // c- bind depth map framebuffer to output the depth values
         {
-            // Use proper shader
             glUseProgram(shaderShadow);
-            // Use proper image output size
             glViewport(0, 0, DEPTH_MAP_TEXTURE_SIZE, DEPTH_MAP_TEXTURE_SIZE);
-            // Bind depth map texture as output framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-            // Bind geometry
             glBindVertexArray(activeBallVAO);
-            // Draw geometry
-            //glDrawElements(GL_TRIANGLES, activeVertices, GL_UNSIGNED_INT, 0);
             glDrawArrays(GL_TRIANGLES, 0, activeBallVertices);
-            // Unbind geometry
             glBindVertexArray(0);
         }
 
-        ////// 2- Render scene: a- bind the default framebuffer and b- just render like
-        ////// what we do normally
-        {
-            // Use proper shader
+         {
             glUseProgram(shaderScene);
-            // Use proper image output size
-            // Side note: we get the size from the framebuffer instead of using WIDTH
-            // and HEIGHT because of a bug with highDPI displays
             int width, height;
             glfwGetFramebufferSize(window, &width, &height);
             glViewport(0, 0, width, height);
-            // Bind screen as output framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            // Bind depth map texture: not needed, by default it is active
-            // glActiveTexture(GL_TEXTURE0);
-            // Bind geometry
             glBindVertexArray(activeBallVAO);
-            // Draw geometry
-            //glDrawElements(GL_TRIANGLES, activeVertices, GL_UNSIGNED_INT, 0);
-
-
-            glUniform3f(colorLocation, 1.0f, 0.0f, 0.0f); // Red 
             glDrawArrays(GL_TRIANGLES, 0, activeBallVertices);
             // Unbind geometry
             glBindVertexArray(0);
         }
         
-        // Everything below here is the solution for Lab02 - Moving camera exercise
-        // We'll change this to be a first or third person camera
-        bool fastCam = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-            glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
-        float currentCameraSpeed = (fastCam) ? cameraFastSpeed : cameraSpeed;
-
+        // moving the camera with mouse
         cameraLookAt = computeCameraLookAt(lastMousePosX, lastMousePosY, dt);
-
         vec3 cameraSideVector = glm::cross(cameraLookAt, vec3(0.0f, 1.0f, 0.0f));
-
         glm::normalize(cameraSideVector);
 
+        // move camera left and right
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-            cameraPosition += cameraSideVector * dt * currentCameraSpeed;
+            cameraPosition += cameraSideVector * dt * cameraSpeed;
         }
         if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            cameraPosition -= cameraSideVector * dt * currentCameraSpeed;
+            cameraPosition -= cameraSideVector * dt * cameraSpeed;
         }
 
+        // zoom
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-            cameraPosition += cameraLookAt * dt * currentCameraSpeed;
+            cameraPosition += cameraLookAt * dt * cameraSpeed;
         }
 
         if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-            cameraPosition -= cameraLookAt * dt * currentCameraSpeed;
+            cameraPosition -= cameraLookAt * dt * cameraSpeed;
         }
 
-        
+       
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
 
-
+        // place model at random place
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             modelPosition = getRandomGridPosition();
+            vec3 newPos(modelPosition.x - 1.0, ballPosition.y, modelPosition.z);
+            ballPosition = newPos;
         }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS ) {
+
+
+        // move model up
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             vec3 newPos(modelPosition.x, modelPosition.y + 0.1, modelPosition.z);
             modelPosition = newPos;
             mov = true;
         }
-
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS ) {
+        // movdel model down
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             vec3 newPos(modelPosition.x, modelPosition.y - 0.1, modelPosition.z);
             modelPosition = newPos;
             mov = true;
         }
-
+        // move model right
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             vec3 newPos(modelPosition.x + 0.1, modelPosition.y, modelPosition.z);
             modelPosition = newPos;
             mov = true;
         }
-
+        //move model left
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             vec3 newPos(modelPosition.x - 0.1, modelPosition.y, modelPosition.z);
             modelPosition = newPos;
             mov = true;
         }
 
+
+        // rotate on y-axis anti-clockwise
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
             angleHorizontal += 1;
             mov = false;
         }
-
+        // rotate on y-axis clockwise
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
             angleHorizontal -= 1;
             mov = false;
         }
-
-        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-            type = 0;
-        }
-        if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-            type = 1;
-        }
-        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
-            type = 2;
-        }
-
-
+        // rotate on x-axis clockwise
         if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
             angleVertical -= 1;
             mov = false;
         }
+        // rotate on x-axis anti-clockwise
         if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
             angleVertical += 1;
             mov = false;
         }
 
+
+        // change the type of the models to fill
+        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+            type = 0;
+        }
+        // change the type of the models to line
+        if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+            type = 1;
+        }
+        // change the type of the models to point
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+            type = 2;
+        }
+        
+
+        // make the model bigger
+        if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+            scal += 0.01;
+            scalBall += 0.001;
+        }
+        //make the model smaller
+        if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
+            scal -= 0.01;
+            scalBall -= 0.001;
+        }
+
+        // slect which handle (upper or lower) arm
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
             arm = 0;
         }
@@ -847,15 +826,29 @@ int main(int argc, char* argv[]) {
             arm = 1;
         }
 
+        if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+            if (light == 0) {
+                light = 1;
+            }
+            else {
+                light = 0;
+            }
+        }
 
+        // put the model to the original position
+        if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+            modelPosition = modelPositionB;
+            ballPosition = ballPositionB;
+        }
+        
         mat4 translation = mat4(1.0f);
         mat4 translation2 = translate(mat4(1.0f), modelPosition);
-
+        // upper arm 
         if (arm == 0) {
             vec3 position(modelPosition.x - 0.17, modelPosition.y - 0.5, modelPosition.z);
             translation = translate(mat4(1.0f), -position);
         }
-
+        // lower arm
         if (arm == 1) {
             vec3 position(modelPosition.x, modelPosition.y, modelPosition.z);
             translation = translate(mat4(1.0f), -position);
@@ -864,10 +857,9 @@ int main(int argc, char* argv[]) {
         glm::mat4 groupMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(angleVertical), glm::vec3(1.0f, 0.0f, 0.0f)) * 
             glm::scale(glm::mat4(1.0f), glm::vec3(1.0f,1.0f,1.0f));
 
-
         glm::mat4 groupMatrix2 = 
             glm::rotate(glm::mat4(1.0f), glm::radians(angleHorizontal), glm::vec3(0.0f, 1.0f, 0.0f)) *
-            glm::scale(glm::mat4(1.0f), glm::vec3(scal, scal, scal));
+            glm::scale(glm::mat4(1.0f), glm::vec3(scal));
 
         mat4 total = mat4(1.0f);
 
@@ -879,16 +871,13 @@ int main(int argc, char* argv[]) {
             total = groupMatrix * translation * groupMatrix2;
         }
 
+        // drawing everything 
         drawFullModel(total, modelPosition, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
+            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, shadows);
 
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
-        
-
-        
     }
 
     glfwTerminate();
@@ -928,7 +917,6 @@ vec3 computeCameraLookAt(double& lastMousePosX, double& lastMousePosY, float dt)
 GLuint setupModelVBO(string path, int& vertexCount) {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
-    std::vector<glm::vec3> colors{6, vec3(1.0f, 0.0f, 0.0f)};
     std::vector<glm::vec2> UVs;
 
     // read the vertex data from the model's OBJ file
@@ -971,14 +959,6 @@ GLuint setupModelVBO(string path, int& vertexCount) {
     glEnableVertexAttribArray(2);
 
 
-    // Setup Colors
-
-    GLuint color_VBO;
-    glGenBuffers(1, &color_VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, color_VBO);  // colors
-    glBufferData(GL_ARRAY_BUFFER, colors.size() * sizeof(vec3), colors.data(),
-               GL_STATIC_DRAW);
-
   // 3rd attribute buffer : vertex color
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
     glEnableVertexAttribArray(2);
@@ -987,68 +967,6 @@ GLuint setupModelVBO(string path, int& vertexCount) {
     // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent
     // strange bugs, as we are using multiple VAOs)
     vertexCount = vertices.size();
-    return VAO;
-}
-
-GLuint setupModelEBO(string path, int& vertexCount) {
-    vector<int> vertexIndices;
-    // The contiguous sets of three indices of vertices, normals and UVs, used to
-    // make a triangle
-    vector<glm::vec3> vertices;
-    vector<glm::vec3> normals;
-    vector<glm::vec2> UVs;
-
-    // read the vertices from the cube.obj file
-    // We won't be needing the normals or UVs for this program
-    loadOBJ2(path.c_str(), vertexIndices, vertices, normals, UVs);
-
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);  // Becomes active VAO
-    // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and
-    // attribute pointer(s).
-
-    // Vertex VBO setup
-    GLuint vertices_VBO;
-    glGenBuffers(1, &vertices_VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, vertices_VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3),
-        &vertices.front(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
-        (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-
-    // Normals VBO setup
-    GLuint normals_VBO;
-    glGenBuffers(1, &normals_VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, normals_VBO);
-    glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3),
-        &normals.front(), GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat),
-        (GLvoid*)0);
-    glEnableVertexAttribArray(1);
-
-    // UVs VBO setup
-    GLuint uvs_VBO;
-    glGenBuffers(1, &uvs_VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, uvs_VBO);
-    glBufferData(GL_ARRAY_BUFFER, UVs.size() * sizeof(glm::vec2), &UVs.front(),
-        GL_STATIC_DRAW);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat),
-        (GLvoid*)0);
-    glEnableVertexAttribArray(2);
-
-    // EBO setup
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexIndices.size() * sizeof(int),
-        &vertexIndices.front(), GL_STATIC_DRAW);
-
-    glBindVertexArray(0);
-    // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent
-    // strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
-    vertexCount = vertexIndices.size();
     return VAO;
 }
 
@@ -1089,49 +1007,3 @@ bool InitContext(GLint WIDTH, GLint HEIGHT) {
     return true;
 }
 
-
-int LoadTexture(const char* filename,int& spriteWidth) {
-
-    GLuint textureId = 0;
-    glGenTextures(1, &textureId);
-    assert(textureId != 0);
-
-    glBindTexture(GL_TEXTURE_2D, textureId);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-        GL_LINEAR_MIPMAP_LINEAR);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    int width, height, nrChannels;
-
-    unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
-    if (!data) {
-        std::cerr << "Error::Texture could not load texture file:" << filename
-            << std::endl;
-        return 0;
-    }
-
-    spriteWidth = width;
-
-    GLenum format = 0;
-    if (nrChannels == 1)
-        format = GL_RED;
-    else if (nrChannels == 3)
-        format = GL_RGB;
-    else if (nrChannels == 4)
-        format = GL_RGBA;
-
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format,
-        GL_UNSIGNED_BYTE, data);
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    stbi_image_free(data);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    return textureId;
-}
