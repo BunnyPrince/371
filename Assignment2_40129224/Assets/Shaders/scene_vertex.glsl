@@ -23,6 +23,5 @@ void main()
     fragment_position = vec3(model_matrix * vec4(position, 1.0));
     fragment_position_light_space = light_proj_view_matrix * vec4(fragment_position, 1.0);
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0);
-    
     vertexUV = aUV;
 }
