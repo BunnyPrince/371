@@ -47,12 +47,25 @@ void SetUniformVec3(GLuint shader_id, const char* uniform_name,
 void SetUniform2D(GLuint shader_id, const char* uniform_name,
     GLuint  uniform_value)
 {
-    glActiveTexture(GL_TEXTURE0);
+    glUseProgram(shader_id);
+    glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, uniform_value);
 
     // Set the texture unit index for the sampler uniform
-    GLint textureUnitIndex = 0; // The same texture unit index used above
-    glUniform1i(glGetUniformLocation(shader_id, "uniform_name"), textureUnitIndex);
+    GLint textureUnitIndex = 1; // The same texture unit index used above
+    glUniform1i(glGetUniformLocation(shader_id, uniform_name), textureUnitIndex);
+}
+
+void SetUniform2DGlossy(GLuint shader_id, const char* uniform_name,
+    GLuint  uniform_value)
+{
+    glUseProgram(shader_id);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, uniform_value);
+
+    // Set the texture unit index for the sampler uniform
+    GLint textureUnitIndex = 2; // The same texture unit index used above
+    glUniform1i(glGetUniformLocation(shader_id, uniform_name), textureUnitIndex);
 }
 GLuint loadTexture(const char* filename)
 {
@@ -287,7 +300,8 @@ void creatCube(mat4 modelMatrices, GLuint shaderScene, GLuint shaderShadow, mat4
 
 // drawing the lower arm 
 void drawLowerArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type,  int texture) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type,  int texture, 
+    GLuint greyTextureID, GLuint greyGlossyTextureID, int isGlossy) {
 
     mat4 modelMatrices =
         translate(mat4(1.0f), vec3(position.x - 0.17, position.y - 0.5, position.z)) *
@@ -295,8 +309,10 @@ void drawLowerArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint sh
         scale(mat4(1.0f), vec3(0.1f, 0.5f, 0.1f));
     mat4 woldMatrices = groupMatrix * modelMatrices;
     if (texture == 0) {
-        vec3 objectColor(0.2f, 0.2f, 0.2f);
-        SetUniformVec3(shaderScene, "object_color", objectColor);
+        SetUniform2D(shaderScene, "textureSampler", greyTextureID);
+    }
+    if (isGlossy == 0) {
+        SetUniform2DGlossy(shaderScene, "textureGlossy", greyGlossyTextureID);
     }
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
         , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
@@ -304,15 +320,18 @@ void drawLowerArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint sh
 
 // drawing the upper arm
 void drawUpperArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture,
+    GLuint greyTextureID, GLuint greyGlossyTextureID, int isGlossy) {
 
     mat4 modelMatrices =
         translate(mat4(1.0f), vec3(position.x, position.y, position.z)) *
         scale(mat4(1.0f), vec3(0.1f, 0.5f, 0.1f));
     mat4 woldMatrices = groupMatrix * modelMatrices;
     if (texture == 0) {
-        vec3 objectColor(0.3f, 0.3f, 0.3f);
-        SetUniformVec3(shaderScene, "object_color", objectColor);
+        SetUniform2D(shaderScene, "textureSampler", greyTextureID);
+    }
+    if (isGlossy == 0) {
+        SetUniform2DGlossy(shaderScene, "textureGlossy", greyGlossyTextureID);
     }
     creatCube(woldMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
         , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
@@ -321,13 +340,17 @@ void drawUpperArm(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint sh
 
 //drawing the rackets
 void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture,
+    GLuint redTextureID, GLuint whiteTextureID, GLuint bleuTextureID, GLuint greyGlossyTextureID, GLuint redGlossyTextureID,
+    GLuint bleuGlossyTextureID, int isGlossy) {
     
 
     //changing the color of the part of the racket red
     if (texture == 0) {
-        vec3 objectColor(1.0f, 0.0f, 0.0f);
-        SetUniformVec3(shaderScene, "object_color", objectColor);
+        SetUniform2D(shaderScene, "textureSampler", redTextureID);
+    }
+    if (isGlossy == 0) {
+        SetUniform2DGlossy(shaderScene, "textureGlossy", redGlossyTextureID);
     }
 
     // the handle
@@ -383,8 +406,10 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
 
     //changing the color of the part of the racket white
     if (texture == 0) {
-        vec3 objectColor2(1.0f, 1.0f, 1.0f);
-        SetUniformVec3(shaderScene, "object_color", objectColor2);
+        SetUniform2D(shaderScene, "textureSampler", bleuTextureID );
+    }
+    if (isGlossy == 0) {
+        SetUniform2DGlossy(shaderScene, "textureGlossy", bleuGlossyTextureID);
     }
     // the left bar that connect the handle '\'
     modelMatrices =
@@ -434,10 +459,12 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
         , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
 
 
-    //changing the color of the net blue
+    //changing the color of the net blueif 
     if (texture == 0) {
-        vec3 objectColor3(0.0f, 0.0f, 1.0f);
-        SetUniformVec3(shaderScene, "object_color", objectColor3);
+        SetUniform2D(shaderScene, "textureSampler", whiteTextureID);
+    }
+    if (isGlossy == 0) {
+        SetUniform2DGlossy(shaderScene, "textureGlossy", greyGlossyTextureID);
     }
 
     // | net 
@@ -463,14 +490,14 @@ void drawRacket(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shad
 }
 
 void drawAxies(vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture
+    , GLuint redTextureID, GLuint bleuTextureID, GLuint greenTextureID) {
 
     mat4 modelMatrices =
         translate(mat4(1.0f), vec3(position.x, position.y + 0.35f, position.z + 0.0f)) *
         scale(mat4(1.0f), vec3(0.02f, 0.5f, 0.02f));
     if (texture == 0) {
-        vec3 objectColor(1.0f, 0.0f, 0.0f);
-        SetUniformVec3(shaderScene, "object_color", objectColor);
+        SetUniform2D(shaderScene, "textureSampler", redTextureID);
     }
     creatCube(modelMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
         , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
@@ -479,20 +506,18 @@ void drawAxies(vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 ligh
      modelMatrices =
         translate(mat4(1.0f), vec3(position.x + 0.35f, position.y + 0.0f, position.z + 0.0f)) *
         scale(mat4(1.0f), vec3(0.5f, 0.02f, 0.02f));
-    if (texture == 0) {
-        vec3 objectColor(0.0f, 0.0f, 1.0f);
-        SetUniformVec3(shaderScene, "object_color", objectColor);
-    }
+     if (texture == 0) {
+         SetUniform2D(shaderScene, "textureSampler", bleuTextureID);
+     }
     creatCube(modelMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
         , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
 
      modelMatrices =
         translate(mat4(1.0f), vec3(position.x, position.y + 0.0f, position.z + 0.45f)) *
-        scale(mat4(1.0f), vec3(0.02f, 0.02f, 0.5f));
-    if (texture == 0) {
-        vec3 objectColor(0.0f, 1.0f, 0.0f);
-        SetUniformVec3(shaderScene, "object_color", objectColor);
-    }
+        scale(mat4(1.0f), vec3(0.02f, 0.02f, 0.5f)); 
+     if (texture == 0) {
+         SetUniform2D(shaderScene, "textureSampler", greenTextureID);
+     }
     creatCube(modelMatrices, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
         , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type);
 
@@ -500,16 +525,21 @@ void drawAxies(vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 ligh
 
 // drawing everything at the same time
 void drawFullModel(mat4 groupMatrix, vec3 position, GLuint shaderScene, GLuint shaderShadow, mat4 lightProjMatrix, mat4 lightViewMatrix, mat4 viewMatrix
-    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture) {
+    , vec3 cameraPosition, vec3 cameraLookAt, vec3 cameraUp, GLuint depth_map_fbo, GLuint activeVAO, int activeVertices, int type, int texture,
+    GLuint greyTextureID, GLuint redTextureID, GLuint whiteTextureID, GLuint bleuTextureID
+    , GLuint greyGlossyTextureID, GLuint redGlossyTextureID, GLuint bleuGlossyTextureID,int isGlossy) {
 
     drawLowerArm(groupMatrix, position, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture, greyTextureID
+        , greyGlossyTextureID, isGlossy);
 
     drawUpperArm(groupMatrix, position, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture, greyTextureID
+        , greyGlossyTextureID, isGlossy);
 
     drawRacket(groupMatrix, position, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture);
+        , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture, redTextureID
+        , whiteTextureID, bleuTextureID, greyGlossyTextureID, redGlossyTextureID, bleuGlossyTextureID, isGlossy);
 }
 
 // getting random position to move
@@ -548,6 +578,7 @@ int main(int argc, char* argv[]) {
         shaderPathPrefix + "shadow_fragment.glsl");
 
 
+
     // Setup models
 #if defined(PLATFORM_OSX)
     string cubePath = "Models/cube.obj";
@@ -556,6 +587,18 @@ int main(int argc, char* argv[]) {
     string cubePath = "Assets/Models/cube.obj";
     string ballPath = "Assets/Models/plane.obj";
 #endif
+
+    GLuint clayTextureID = loadTexture("Assets/textures/clayTexture.png");
+    GLuint ballGreenTextureID = loadTexture("Assets/textures/ballGreen.jpg");
+    GLuint bleuTextureID = loadTexture("Assets/textures/bleu.jpg");
+    GLuint glossyTextureID = loadTexture("Assets/textures/glossy.png");
+    GLuint greyTextureID = loadTexture("Assets/textures/gray.jpg");
+    GLuint redTextureID = loadTexture("Assets/textures/red.jpg");
+    GLuint greenTextureID = loadTexture("Assets/textures/green.jpg");
+    GLuint whiteTextureID = loadTexture("Assets/textures/white.jpg");
+    GLuint redGlossyTextureID = loadTexture("Assets/textures/redGlossy.jpg");
+    GLuint bleuGlossyTextureID = loadTexture("Assets/textures/blueGlossy.jpg");
+    GLuint greyGlossyTextureID = loadTexture("Assets/textures/greyGlossy.jpg");
 
     int cubeVertices;
     GLuint cubeVAO = setupModelVBO(cubePath, cubeVertices);
@@ -637,6 +680,7 @@ int main(int argc, char* argv[]) {
 
     float angleHorizontal = 0;
     float angleVertical = 0;
+    float angleZ = 0;
     float scal = 1.0f;
 
     float scalBall = 0.0f;
@@ -648,6 +692,7 @@ int main(int argc, char* argv[]) {
     bool mov = true;
     int shadows = 0;
     int texture = 0;
+    int glossy = 0;
 
     // Set projection matrix for shader, this won't change
     mat4 projectionMatrix =
@@ -666,6 +711,7 @@ int main(int argc, char* argv[]) {
     // Set view matrix on both shaders
     SetUniformMat4(shaderScene, "view_matrix", viewMatrix);
 
+
     float lightAngleOuter = radians(30.0f);
     float lightAngleInner = radians(20.0f);
     // Set light cutoff angles on scene shader
@@ -675,8 +721,6 @@ int main(int argc, char* argv[]) {
     // Set light color on scene shader
     SetUniformVec3(shaderScene, "light_color", vec3(1));
 
-    // Set object color on scene shader
-    SetUniformVec3(shaderScene, "object_color", vec3(1));
 
     // For frame time
     float lastFrameTime = glfwGetTime();
@@ -685,6 +729,7 @@ int main(int argc, char* argv[]) {
     glfwGetCursorPos(window, &lastMousePosX, &lastMousePosY);
 
     float lastclicked = glfwGetTime();
+
 
     // Other OpenGL states to set once
     // Enable Backface culling
@@ -751,20 +796,22 @@ int main(int argc, char* argv[]) {
         WIDTH = width;
         HEIGHT = height;
 
-
         // Set ball matrix and send to both shaders
-        mat4 ballMatrices =  // mat4(1.0f);
-            translate(mat4(1.0f), ballPosition) *
-            rotate(mat4(1.0f), radians(angleHorizontal), vec3(0.0f, 1.0f, 0.0f)) *
-            rotate(mat4(1.0f), radians(angleVertical), vec3(1.0f, 0.0f, 0.0f)) *
-            scale(mat4(1.0f), vec3(0.06f + scalBall));
+        mat4 groundMatrices =  // mat4(1.0f);
+            translate(mat4(1.0f), vec3(0.0f,-10.0f,0.0f)) *
+            rotate(mat4(1.0f), radians(90.0f), vec3(1.0f, 0.0f, 0.0f)) *
+            scale(mat4(1.0f), vec3(100.0f, 100.0f,0.1f));
 
-        SetUniformMat4(shaderScene, "model_matrix", ballMatrices);
-        SetUniformMat4(shaderShadow, "transform_in_light_space", lightProjMatrix * lightViewMatrix * ballMatrices);
+
+        SetUniformMat4(shaderScene, "model_matrix", groundMatrices);
+        SetUniformMat4(shaderShadow, "transform_in_light_space", lightProjMatrix * lightViewMatrix * groundMatrices);
+
+
+
+
         //changing the color of the ball green 
         if (texture == 0) {
-            vec3 objectColor2(0.0f, 1.0f, 0.0f);
-            SetUniformVec3(shaderScene, "object_color", objectColor2);
+            SetUniform2D(shaderScene, "textureSampler", clayTextureID);
         }
 
         // Render shadow in 2 passes: 1- Render depth map, 2- Render scene
@@ -778,8 +825,8 @@ int main(int argc, char* argv[]) {
             // Clear depth data on the framebuffer
             glClear(GL_DEPTH_BUFFER_BIT);
             // Bind and draw geometry
-            glBindVertexArray(activeBallVAO);
-            glDrawArrays(GL_TRIANGLES, 0, activeBallVertices);
+            glBindVertexArray(activeVAO);
+            glDrawArrays(GL_TRIANGLES, 0, activeVertices);
             // Unbind geometry
             glBindVertexArray(0);
         }
@@ -787,7 +834,6 @@ int main(int argc, char* argv[]) {
         ////// 2- Render scene: a- bind the default framebuffer and b- just render like
         ////// what we do normally
         {
-            // Use proper shader
             glUseProgram(shaderScene);
             // Use proper image output size
             // Side note: we get the size from the framebuffer instead of using WIDTH
@@ -799,15 +845,70 @@ int main(int argc, char* argv[]) {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // Bind and draw geometry
+            glBindVertexArray(activeVAO);
+            glDrawArrays(GL_TRIANGLES, 0, activeVertices);
+            // Unbind geometry
+            glBindVertexArray(0);
+        }
+
+
+        // Set ball matrix and send to both shaders
+        mat4 ballMatrices =  // mat4(1.0f);
+            translate(mat4(1.0f), ballPosition) *
+            rotate(mat4(1.0f), radians(angleHorizontal), vec3(0.0f, 1.0f, 0.0f)) *
+            rotate(mat4(1.0f), radians(angleVertical), vec3(1.0f, 0.0f, 0.0f)) *
+            scale(mat4(1.0f), vec3(0.06f + scalBall));
+
+
+        SetUniformMat4(shaderScene, "model_matrix", ballMatrices);
+        SetUniformMat4(shaderShadow, "transform_in_light_space", lightProjMatrix * lightViewMatrix * ballMatrices);
+       
+
+        
+
+        //changing the color of the ball green 
+        if (texture == 0) {
+            SetUniform2D(shaderScene, "textureSampler", ballGreenTextureID);
+        }
+
+        // Render shadow in 2 passes: 1- Render depth map, 2- Render scene
+        {
+            // Use proper shader
+            glUseProgram(shaderShadow);
+            // Use proper image output size
+            glViewport(0, 0, DEPTH_MAP_TEXTURE_SIZE, DEPTH_MAP_TEXTURE_SIZE);
+            // Bind depth map texture as output framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+            // Clear depth data on the framebuffer
+            // Bind and draw geometry
             glBindVertexArray(activeBallVAO);
             glDrawArrays(GL_TRIANGLES, 0, activeBallVertices);
             // Unbind geometry
             glBindVertexArray(0);
         }
 
+        ////// 2- Render scene: a- bind the default framebuffer and b- just render like
+        ////// what we do normally
+        { 
+            glUseProgram(shaderScene);
+            // Use proper image output size
+            // Side note: we get the size from the framebuffer instead of using WIDTH
+            // and HEIGHT because of a bug with highDPI displays
+            int width, height;
+            glfwGetFramebufferSize(window, &width, &height);
+            glViewport(0, 0, width, height);
+            // Bind screen as output framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            // Bind and draw geometry
+            glBindVertexArray(activeBallVAO);
+            glDrawArrays(GL_TRIANGLES, 0, activeBallVertices);
+            // Unbind geometry
+            glBindVertexArray(0);
+        }
 
         drawAxies(axiesPosition, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture);
+            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture,
+            redTextureID, bleuTextureID, greenTextureID);
 
         // moving the camera with mouse
         cameraLookAt = computeCameraLookAt(lastMousePosX, lastMousePosY, dt);
@@ -881,6 +982,16 @@ int main(int argc, char* argv[]) {
             angleHorizontal -= 1;
             mov = false;
         }
+        // rotate on y-axis anti-clockwise
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            angleZ += 1;
+            mov = false;
+        }
+        // rotate on y-axis clockwise
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            angleZ -= 1;
+            mov = false;
+        }
         // rotate on x-axis clockwise
         if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
             angleVertical -= 1;
@@ -942,7 +1053,7 @@ int main(int argc, char* argv[]) {
         }
 
         //Remove color texture
-        if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+        /*if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
             float differentTime = glfwGetTime() - lastclicked;
             if (differentTime > 1.0f) {
                 lastclicked = glfwGetTime();
@@ -954,7 +1065,7 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-        }
+        }*/
         
         // put the model to the original position
         if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -971,9 +1082,21 @@ int main(int argc, char* argv[]) {
         }
 
         // put the model to the original position
-        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
             modelPosition = modelPositionB;
             ballPosition = ballPositionB;
+        }
+        if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS) {
+            float differentTime = glfwGetTime() - lastclicked;
+            if (differentTime > 1.0f) {
+                lastclicked = glfwGetTime();
+                if (glossy == 0) {
+                    glossy = 1;
+                }
+                else {
+                    glossy = 0;
+                }
+            }
         }
 
         mat4 translation = mat4(1.0f);
@@ -996,20 +1119,25 @@ int main(int argc, char* argv[]) {
             rotate(mat4(1.0f), radians(angleHorizontal), vec3(0.0f, 1.0f, 0.0f)) *
             scale(mat4(1.0f), vec3(scal));
 
+        mat4 groupMatrix3 =
+            rotate(mat4(1.0f), radians(angleZ), vec3(0.0f, 0.0f, 1.0f)) *
+            scale(mat4(1.0f), vec3(scal));
+
         mat4 total = mat4(1.0f);
 
         if (mov) {
-            total = groupMatrix * translation * groupMatrix2 * translation2;
+            total = groupMatrix * translation * groupMatrix2 * translation2 * groupMatrix3;
         }
         else {
 
-            total = groupMatrix * translation * groupMatrix2;
+            total = groupMatrix * translation * groupMatrix2 * groupMatrix3;
         }
 
         // drawing everything 
         drawFullModel(total, modelPosition, shaderScene, shaderShadow, lightProjMatrix, lightViewMatrix, viewMatrix
-            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture);
-
+            , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture, 
+            greyTextureID, redTextureID, whiteTextureID, bleuTextureID, greyGlossyTextureID, redGlossyTextureID
+            ,bleuGlossyTextureID , glossy);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
