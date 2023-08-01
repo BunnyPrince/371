@@ -25,3 +25,48 @@ all the features that are done in this code:
 
 Bonnus:
 - make the light rotate
+
+
+Inputs:
+- right = camera to right
+- lefft = camera to left
+- up = camerao to up
+- down  = camera to down
+
+- shift + up = zoom
+- shift + down = un-zoom
+
+- escap = close window
+
+- space = random position
+
+- shift + w = model to up
+- shift + s = model to down
+- shift + d = model to right
+- shift + a = model to left
+
+- d = rotate on y-axis to anti-clockwise
+- a = rotate on y-axis to clockwise
+- w = rotate on x-axis to clockwise
+- s = rotate on x-axis to anti-clockwise
+- z = rotate on z-axis to anti-clockwise
+- c = rotate on z-axis to clockwise
+
+- t = fill
+- l = line
+- p = point
+
+- u = bigger
+- j = smaller
+
+- g = on/off rotating light
+
+- b = on/off shadows
+
+- o = model to origine
+
+- h = on/off glossy
+
+- 1 = lower arm
+- 2 = upper arm
+
