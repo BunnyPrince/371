@@ -2,7 +2,8 @@
 ### Jananee Aruboribaran 40129224
 
 The full look of the code
-![image](https://github.com/BunnyPrince/371/assets/71982648/0453154c-99f1-4483-a847-49b687622ec9)
+![image](https://github.com/BunnyPrince/371/assets/71982648/b1a1d980-38c3-4f94-9631-49cbccc7310b)
+
 
 
 
