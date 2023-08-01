@@ -32,18 +32,23 @@ Inputs:
 - lefft = camera to left
 - up = camerao to up
 - down  = camera to down
+<br>
 
 - shift + up = zoom
 - shift + down = un-zoom
+<br>
 
 - escap = close window
+<br>
 
 - space = random position
+<br>
 
 - shift + w = model to up
 - shift + s = model to down
 - shift + d = model to right
 - shift + a = model to left
+<br>
 
 - d = rotate on y-axis to anti-clockwise
 - a = rotate on y-axis to clockwise
@@ -51,21 +56,28 @@ Inputs:
 - s = rotate on x-axis to anti-clockwise
 - z = rotate on z-axis to anti-clockwise
 - c = rotate on z-axis to clockwise
+<br>
 
 - t = fill
 - l = line
 - p = point
+<br>
 
 - u = bigger
 - j = smaller
+<br>
 
 - g = on/off rotating light
+<br>
 
 - b = on/off shadows
+<br>
 
 - o = model to origine
+<br>
 
 - h = on/off glossy
+<br>
 
 - 1 = lower arm
 - 2 = upper arm
