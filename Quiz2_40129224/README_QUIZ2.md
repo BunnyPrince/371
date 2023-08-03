@@ -13,6 +13,8 @@ view of camera 1
 
 view of camera 2
 ![image](https://github.com/BunnyPrince/371/assets/71982648/64d552db-30df-4b30-81f1-07f894e3bfc4)
+<br>
+<br>
 
 all the features that are done in this code:
 - full tennis court with textures
@@ -26,17 +28,22 @@ all the features that are done in this code:
   -   roatating on the y-axis
 -   spotlight on the z-axis
 -   shadow with 2 pass shadow algorithms
+<br>
+<br>
 
 
 input :
 - escap = close window
+<br>
 
 - space = random position
+<br>
 
 - shift + w = model to up
 - shift + s = model to down
 - shift + d = model to right
 - shift + a = model to left
+<br>
 
 - d = rotate on y-axis to anti-clockwise
 - a = rotate on y-axis to clockwise
@@ -44,26 +51,35 @@ input :
 - s = rotate on x-axis to anti-clockwise
 - z = rotate on z-axis to anti-clockwise
 - c = rotate on z-axis to clockwise
+<br>
 
 - t = fill
 - l = line
 - p = point
+<br>
 
 - u = bigger
 - j = smaller
+<br>
 
 - g = on/off rotating light
+<br>
 
 - b = on/off shadows
+<br>
 
 - r = model to origine
+<br>
 
 - i = on/off spotlight
+<br>
 
 - m = change different camera
+<br>
   
 - 1 = racket 1
 - 2 = racket 2
+<br>
 
 Code reused:
 - Assignement 2
