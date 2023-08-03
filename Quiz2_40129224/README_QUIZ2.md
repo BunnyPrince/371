@@ -39,6 +39,14 @@ input :
 - space = random position
 <br>
 
+- shift + up = + z-axis
+- shift + down = - z-axis
+- up = + y-axis
+- down = - y-axis
+- left = - x-axis
+- right = + x-axis
+<br>
+
 - shift + w = model to up
 - shift + s = model to down
 - shift + d = model to right
