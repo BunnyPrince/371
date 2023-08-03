@@ -1284,7 +1284,7 @@ int main(int argc, char* argv[]) {
         }
 
         // move model up
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
             if (racket == 0) {
                 vec3 newPos(modelPosition.x, modelPosition.y + 0.1, modelPosition.z);
                 modelPosition = newPos;
@@ -1296,7 +1296,7 @@ int main(int argc, char* argv[]) {
             mov = true;
         }
         // movdel model down
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
             if (racket == 0) {
                 vec3 newPos(modelPosition.x, modelPosition.y - 0.1, modelPosition.z);
                 modelPosition = newPos;
@@ -1308,7 +1308,7 @@ int main(int argc, char* argv[]) {
             mov = true;
         }
         // move model right
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
             if (racket == 0) {
                 vec3 newPos(modelPosition.x + 0.1, modelPosition.y, modelPosition.z);
                 modelPosition = newPos;
@@ -1320,7 +1320,7 @@ int main(int argc, char* argv[]) {
             mov = true;
         }
         //move model left
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
             if (racket == 0) {
                 vec3 newPos(modelPosition.x - 0.1, modelPosition.y, modelPosition.z);
                 modelPosition = newPos;
@@ -1331,10 +1331,35 @@ int main(int argc, char* argv[]) {
             }
             mov = true;
         }
+        // rotate on z-axis anti-clockwise
+        if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            if (racket == 0) {
+                vec3 newPos(modelPosition.x , modelPosition.y, modelPosition.z- 0.1);
+                modelPosition = newPos;
+            }
+            else {
+                vec3 newPos(modelPosition2.x , modelPosition2.y, modelPosition2.z- 0.1);
+                modelPosition2 = newPos;
+            }
+            mov = true;
+        }
+        // rotate on z-axis clockwise
+        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            if (racket == 0) {
+                vec3 newPos(modelPosition.x , modelPosition.y, modelPosition.z+ 0.1);
+                modelPosition = newPos;
+            }
+            else {
+                vec3 newPos(modelPosition2.x, modelPosition2.y, modelPosition2.z + 0.1);
+                modelPosition2 = newPos;
+            }
+            mov = true;
+        }
+
 
 
         // rotate on y-axis anti-clockwise
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             if (racket == 0) {
                 angleHorizontal += 1;
             }
@@ -1344,7 +1369,7 @@ int main(int argc, char* argv[]) {
             mov = false;
         }
         // rotate on y-axis clockwise
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             if (racket == 0) {
                 angleHorizontal -= 1;
             }
@@ -1354,7 +1379,7 @@ int main(int argc, char* argv[]) {
             mov = false;
         }
         // rotate on z-axis anti-clockwise
-        if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             if (racket == 0) {
                 angleZ += 1;
             }
@@ -1364,7 +1389,7 @@ int main(int argc, char* argv[]) {
             mov = false;
         }
         // rotate on z-axis clockwise
-        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             if (racket == 0) {
                 angleZ -= 1;
             }
@@ -1374,7 +1399,7 @@ int main(int argc, char* argv[]) {
             mov = false;
         }
         // rotate on x-axis clockwise
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             if (racket == 0) {
                 angleVertical -= 1;
             }
@@ -1384,7 +1409,7 @@ int main(int argc, char* argv[]) {
             mov = false;
         }
         // rotate on x-axis anti-clockwise
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             if (racket == 0) {
                 angleVertical += 1;
             }
@@ -1596,6 +1621,9 @@ int main(int argc, char* argv[]) {
             , cameraPosition, cameraLookAt, cameraUp, depth_map_fbo, activeVAO, activeVertices, type, texture,
             greyGlossyTextureID, redGlossyTextureID
             , bleuGlossyTextureID, tattooedTextureID);
+
+        cameraPosition1 = vec3(modelPosition.x, modelPosition.y+2.5, modelPosition.z-0.5);
+        cameraPosition2 = vec3(modelPosition2.x, modelPosition2.y + 2.5, modelPosition2.z + 0.5);
 
         if (nextCamera == 0) {
 
