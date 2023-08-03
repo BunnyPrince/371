@@ -1176,7 +1176,7 @@ int main(int argc, char* argv[]) {
             SetUniformVec3(shaderScene, "light_color", vec3(1));
             lightPosition = vec3(0.0f, 0.0f,  30.0f);
         }
-        else {
+        else if(light == 1){
             // rotating light
             SetUniformVec3(shaderScene, "light_color", vec3(0.565f, 0.933f, 0.565f));
             lightPosition = vec3(cosf(theta),0.0f ,sinf(theta)) * 30.0f;
@@ -1185,6 +1185,11 @@ int main(int argc, char* argv[]) {
             SetUniformMat4(shaderScene, "view_matrix", viewMatrix);
             //Set view position on scene shader
             SetUniformVec3(shaderScene, "view_position", lightPosition);
+        }
+        else {
+
+            SetUniformVec3(shaderScene, "light_color", vec3(1));
+            lightPosition = vec3(0.0f, 30.0f, 0.0f);
         }
 
         vec3 lightFocus(0.01);  // the point in 3D space the light "looks" at
@@ -1281,6 +1286,31 @@ int main(int argc, char* argv[]) {
             else {
                 modelPosition2 = getRandomGridPosition();
             }
+        }
+
+        // camera movement 
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+            cameraPositionDefault = vec3(cameraPositionDefault.x, cameraPositionDefault.y, cameraPositionDefault.z - 0.1f);
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+            cameraPositionDefault = vec3(cameraPositionDefault.x, cameraPositionDefault.y, cameraPositionDefault.z + 0.1f);
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            cameraPositionDefault = vec3(cameraPositionDefault.x, cameraPositionDefault.y + 0.1f, cameraPositionDefault.z);
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            cameraPositionDefault = vec3(cameraPositionDefault.x, cameraPositionDefault.y - 0.1f, cameraPositionDefault.z);
+        }
+        
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            cameraPositionDefault = vec3(cameraPositionDefault.x + 0.1f, cameraPositionDefault.y, cameraPositionDefault.z);
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS) {
+            cameraPositionDefault = vec3(cameraPositionDefault.x - 0.1f, cameraPositionDefault.y, cameraPositionDefault.z);
         }
 
         // move model up
@@ -1468,6 +1498,9 @@ int main(int argc, char* argv[]) {
                 lastclicked = glfwGetTime();
                 if (light == 0) {
                     light = 1;
+                }
+                else if( light == 1){
+                    light = 2;
                 }
                 else {
                     light = 0;
