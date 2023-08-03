@@ -1086,6 +1086,7 @@ int main(int argc, char* argv[]) {
 
 
 
+    vec3 cameraPositionDefault2(25.0f, 8.0f, 20.0f);
     vec3 cameraPosition = cameraPositionDefault;
     vec3 cameraLookAt(0.0f, 0.0f, 0.0f);
     vec3 cameraUp(0.0f, 1.0f, 0.0f);
@@ -1257,6 +1258,7 @@ int main(int argc, char* argv[]) {
 
             modelPosition = modelPositionDefault;
             modelPosition2 = modelPosition2Default;
+            cameraPositionDefault = cameraPositionDefault2;
 
             angleHorizontal = 0;
             angleVertical = 0;
